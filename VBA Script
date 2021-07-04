@@ -1,0 +1,97 @@
+Attribute VB_Name = "Module1"
+Sub Stocks():
+    For Each ws In Worksheets
+
+'variables
+
+        Dim i As Long
+
+        Dim j As Long
+        
+        Dim Ticker As Long
+    
+        Dim PercentChange As Double
+        
+' Keep track of the location for each credit card brand in the summary table
+        Dim TickerCounter As Long
+        TickerCounter = 2
+        
+        Dim LastRow As Long
+        
+        Dim LastRowSum As Long
+        
+'Column Headers
+
+        ws.Cells(1, 8).Value = "Ticker"
+
+        ws.Cells(1, 9).Value = "Yearly Change"
+
+        ws.Cells(1, 10).Value = "Percent Change"
+
+        ws.Cells(1, 11).Value = "Total Stock Volume"
+        
+        
+      
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+
+
+'Loop through all the stocks
+            Ticker = 2
+
+            For i = 2 To LastRow
+' Check if we are still within the same stock, if it is not...
+
+                If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                
+                'Set the stock name
+            
+                ws.Cells(Ticker, 8).Value = ws.Cells(i, 1).Value
+                
+                'Calculate Difference
+                
+                ws.Cells(Ticker, 9).Value = ws.Cells(i, 6).Value - ws.Cells(TickerCounter, 3).Value
+
+                'Percent Change Column
+        
+                    If ws.Cells(TickerCounter, 3).Value <> 0 Then
+                    
+                    PercentChange = ((ws.Cells(i, 6).Value - ws.Cells(TickerCounter, 3).Value) / ws.Cells(TickerCounter, 3).Value)
+                    ws.Cells(Ticker, 10).Value = Format(PercentChange, "Percent")
+
+                    Else
+                    ws.Cells(Ticker, 10).Value = Format(0, "Percent")
+                    
+                    End If
+
+'Conditional Formatting
+
+                    If ws.Cells(Ticker, 9).Value < 0 Then
+                    ws.Cells(Ticker, 9).Interior.ColorIndex = 3
+                    
+                    Else
+                    ws.Cells(Ticker, 9).Interior.ColorIndex = 4
+
+                
+                    End If
+                    
+'Total Stock Volume
+           
+                ws.Cells(Ticker, 11).Value = WorksheetFunction.Sum(Range(ws.Cells(TickerCounter, 7), ws.Cells(i, 7)))
+
+                Ticker = Ticker + 1
+                TickerCounter = i + 1
+        
+            End If
+
+            Next i
+        
+           
+            
+    Next ws
+
+    
+End Sub
+
+
+
